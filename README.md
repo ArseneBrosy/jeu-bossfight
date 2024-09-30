@@ -1,2 +1,2 @@
 # jeu-bossfight
-Projet a deux avec @AlexLeProgrammeur
+Projet a deux avec @AlexLeProgrammer
