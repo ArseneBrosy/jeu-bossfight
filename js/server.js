@@ -24,8 +24,8 @@ socket.on('playerJoined', (player) => {
   fillLobbyPage();
 });
 
-socket.on('playerLeft', (player) => {
-  const index = lobby.players.indexOf(player);
+socket.on('playerLeft', (playerId) => {
+  const index = lobby.players.map(e => e.id).indexOf(playerId);
   if (index > -1) {
     lobby.players.splice(index, 1);
   }
@@ -37,7 +37,9 @@ socket.on('disconnect', () => {})
 
 //region ACTIONS
 document.getElementById('join-game-button').addEventListener('click', () => {
-  socket.emit('joinGame');
+  if (document.querySelector('#home-pseudo').value !== null) {
+    socket.emit('joinGame', {name: document.querySelector('#home-pseudo').value});
+  }
 });
 
 document.getElementById('game-lobby-quit-button').addEventListener('click', () => {

@@ -5,18 +5,20 @@
     <title>Jeu bossfight</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/lobby.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
     <div class="page" id="connection" style="display: none">
         <h1>Connection au serveur</h1>
     </div>
 
-    <div class="page" id="home" style="display: none">
+    <div class="page" id="home" style="display: flex">
         <h1>Jeu bossfight</h1>
-        <button id="join-game-button">Join game</button>
+        <input placeholder="Pseudo" type="text" id="home-pseudo">
+        <button id="join-game-button">Rejoindre une partie</button>
     </div>
 
-    <div class="page" id="game-lobby" style="display: flex">
+    <div class="page" id="game-lobby" style="display: none">
         <h1>Partie</h1>
         <p>game id <span id="game-lobby-game-id"></span></p>
         <p id="game-lobby-size">0 / 5</p>

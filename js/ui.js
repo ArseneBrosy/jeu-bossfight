@@ -19,7 +19,7 @@ function fillLobbyPage() {
   // players
   document.querySelector('#game-lobby-players').innerHTML = "";
   for (let player of lobby.players) {
-    document.querySelector('#game-lobby-players').innerHTML += `<div class="filled"><canvas></canvas><p>${player}</p></div>`;
+    document.querySelector('#game-lobby-players').innerHTML += `<div class="filled"><canvas></canvas><p>${player.name}</p></div>`;
   }
   for (let i = lobby.players.length; i < 5; i++) {
     document.querySelector('#game-lobby-players').innerHTML += '<div></div>';
@@ -28,3 +28,13 @@ function fillLobbyPage() {
   // lobby size
   document.querySelector('#game-lobby-size').innerText = `${lobby.players.length} / 5`;
 }
+
+//region PSEUDO
+if (localStorage.getItem('pseudo') !== null) {
+  document.querySelector('#home-pseudo').value = localStorage.getItem('pseudo');
+}
+
+document.querySelector('#home-pseudo').addEventListener('input', (e) => {
+  localStorage.setItem('pseudo', e.target.value);
+});
+//endregion
