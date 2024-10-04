@@ -24,6 +24,7 @@ const DEFAULT_FPS = 60;
 // Players
 const PLAYER_SPEED = 10;
 const PLAYER_JUMP_FORCE = 25;
+const DEFAULT_MAX_JUMPS = 2;
 
 // Physics
 const GRAVITY_FORCE = 2;
@@ -32,6 +33,7 @@ const GRAVITY_FORCE = 2;
 
 //#region Classes
 
+// Represent a 2d shape
 class Transform {
     x;
     y;
@@ -53,12 +55,14 @@ class Transform {
     }
 }
 
+// Represent a player
 class Player {
     transform;
     type;
     direction = false;
     isGrounded = false;
     yVelocity = 0;
+    jumpRemaining = DEFAULT_MAX_JUMPS;
 
     /**
      * Constructor.
@@ -70,6 +74,7 @@ class Player {
         this.type = type;
     }
 }
+
 
 //#endregion
 
@@ -89,6 +94,9 @@ let inputLeft = false;
 let inputRight = false;
 let inputJump = false;
 
+// Platforms
+let platforms = [new Transform(600,700,300,80), new Transform(1200,500,300,80)];
+
 //#endregion
 
 // Main loop
@@ -100,25 +108,73 @@ setInterval(() => {
     //#region Gravity
 
     // Apply the gravity to the player if he isn't grounded
-    if (player.transform.y + player.transform.height === CANVAS.height) {
+    let groundDistance = CANVAS.height - player.transform.y - player.transform.height;
+    let ceilDistance = CANVAS.height;
+    let leftDistance = null;
+    let rightDistance = null;
+
+    for (let platform of platforms) {
+        // Check that the platform is under the player and if its the nearest
+        let distance = platform.y - player.transform.y - player.transform.height;
+        if (platform.y >= player.transform.y + player.transform.height && player.transform.x <= platform.x + platform.width &&
+        player.transform.x + player.transform.width >= platform.x && distance < groundDistance) {
+            groundDistance = distance;
+        }
+
+        // Check that the platform is over the player and if its the nearest
+        distance = player.transform.y - platform.y - platform.height;
+        if (platform.y + platform.height <= player.transform.y && player.transform.x <= platform.x + platform.width &&
+            player.transform.x + player.transform.width >= platform.x && distance < ceilDistance) {
+            ceilDistance = distance;
+        }
+
+        // Left
+        distance = player.transform.x - platform.x - platform.width;
+        if (platform.x + platform.width <= player.transform.x && player.transform.y <= platform.y + platform.height &&
+            player.transform.y + player.transform.height >= platform.y && (distance < leftDistance || leftDistance === null)) {
+            leftDistance = distance;
+        }
+
+        // Right
+        distance = platform.x - player.transform.x - player.transform.width;
+        if (platform.x >= player.transform.x + player.transform.width && player.transform.y <= platform.y + platform.height &&
+            player.transform.y + player.transform.height >= platform.y && (distance < rightDistance || rightDistance === null)) {
+            rightDistance = distance;
+        }
+    }
+    console.log(ceilDistance);
+
+    if (groundDistance === 0) {
         player.isGrounded = true;
     } else {
         player.yVelocity += GRAVITY_FORCE * deltaTime;
         player.isGrounded = false;
 
-        if (player.transform.y + player.transform.height >= CANVAS.height) {
-            player.transform.y = CANVAS.height - player.transform.height;
+        if (player.yVelocity > 0 && groundDistance < player.yVelocity * deltaTime) {
+            player.transform.y += groundDistance;
             player.yVelocity = 0;
             player.isGrounded = true;
+        } else if (player.yVelocity < 0 && ceilDistance < -player.yVelocity * deltaTime) {
+            player.transform.y -= ceilDistance;
+            player.yVelocity = 0;
         }
     }
 
-    // Jump
-    if (inputJump) {
-        inputJump = false;
+    // Reload jumps remaining
+    if (player.isGrounded) {
+        player.jumpRemaining = DEFAULT_MAX_JUMPS;
+    }
 
-        if (player.isGrounded) {
-            player.yVelocity = -PLAYER_JUMP_FORCE;
+    // Jump
+    if (inputJump && player.jumpRemaining > 0) {
+        inputJump = false;
+        player.jumpRemaining--;
+
+        player.yVelocity = -PLAYER_JUMP_FORCE;
+
+        if (ceilDistance < -player.yVelocity * deltaTime) {
+            player.transform.y -= ceilDistance;
+            player.yVelocity = 0;
         }
     }
 
@@ -130,10 +186,20 @@ setInterval(() => {
 
     // Move the player
     if (inputLeft && !inputRight) {
-        player.transform.x -= PLAYER_SPEED * deltaTime;
+        if (leftDistance !== null && leftDistance < PLAYER_SPEED * deltaTime) {
+            player.transform.x -= leftDistance;
+        } else {
+            player.transform.x -= PLAYER_SPEED * deltaTime;
+        }
+
         player.direction = false;
     } else if (inputRight && !inputLeft) {
-        player.transform.x += PLAYER_SPEED * deltaTime;
+        if (rightDistance !== null && rightDistance < PLAYER_SPEED * deltaTime) {
+            player.transform.x += rightDistance;
+        } else {
+            player.transform.x += PLAYER_SPEED * deltaTime;
+        }
+
         player.direction = true;
     }
 
@@ -152,6 +218,15 @@ setInterval(() => {
     for (let playerToDisplay of playersToDisplay) {
         CTX.drawImage(player.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
             playerToDisplay.transform.width, playerToDisplay.transform.height);
+    }
+
+    // Draw the platforms
+    for (let platform of platforms){
+        CTX.fillStyle = "darkgreen";
+        CTX.fillRect(platform.x, platform.y, platform.width, platform.height);
+        CTX.strokeStyle = "black";
+        CTX.lineWidth = 7;
+        CTX.strokeRect(platform.x, platform.y, platform.width, platform.height);
     }
 
     //#endregion
