@@ -19,4 +19,5 @@ canvas {
     max-height: 100%;
     aspect-ratio: 1920 / 880;
     background-color: white;
+    image-rendering: pixelated;
 }

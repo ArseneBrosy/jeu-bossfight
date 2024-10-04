@@ -12,6 +12,12 @@ const CTX = CANVAS.getContext("2d");
 CANVAS.width = 1920;
 CANVAS.height = 880;
 
+// Sprites
+const PLAYER_LEFT = new Image();
+PLAYER_LEFT.src = "img/player-left.png";
+const PLAYER_RIGHT = new Image();
+PLAYER_RIGHT.src = "img/player-right.png";
+
 // Delta-time
 const DEFAULT_FPS = 60;
 
@@ -50,7 +56,7 @@ class Transform {
 class Player {
     transform;
     type;
-
+    direction = false;
     isGrounded = false;
     yVelocity = 0;
 
@@ -74,7 +80,8 @@ let deltaTime = 0;
 let lastTick = 0;
 
 // Players
-let player = new Player(new Transform(0, 0, 100, 100));
+let player = new Player(new Transform(0, 0,
+    PLAYER_LEFT.width / 3, PLAYER_LEFT.height / 3));
 let otherPlayers = [];
 
 // Inputs
@@ -124,8 +131,10 @@ setInterval(() => {
     // Move the player
     if (inputLeft && !inputRight) {
         player.transform.x -= PLAYER_SPEED * deltaTime;
+        player.direction = false;
     } else if (inputRight && !inputLeft) {
         player.transform.x += PLAYER_SPEED * deltaTime;
+        player.direction = true;
     }
 
     //#enregion
@@ -141,8 +150,7 @@ setInterval(() => {
     let playersToDisplay = JSON.parse(JSON.stringify(otherPlayers));
     playersToDisplay.push(player);
     for (let playerToDisplay of playersToDisplay) {
-        CTX.fillStyle = "red";
-        CTX.fillRect(playerToDisplay.transform.x, playerToDisplay.transform.y,
+        CTX.drawImage(player.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
             playerToDisplay.transform.width, playerToDisplay.transform.height);
     }
 
