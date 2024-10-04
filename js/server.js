@@ -13,10 +13,25 @@ socket.on('connect', () => {
   openPage('home');
 });
 
-socket.on('gameJoined', (lobby) => {
+socket.on('gameJoined', (lobby_) => {
   openPage('game-lobby');
-  fillLobbyPage(lobby);
-})
+  lobby = lobby_;
+  fillLobbyPage();
+});
+
+socket.on('playerJoined', (player) => {
+  lobby.players.push(player);
+  fillLobbyPage();
+});
+
+socket.on('playerLeft', (player) => {
+  const index = lobby.players.indexOf(player);
+  if (index > -1) {
+    lobby.players.splice(index, 1);
+  }
+
+  fillLobbyPage();
+});
 
 socket.on('disconnect', () => {})
 

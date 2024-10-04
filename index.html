@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Jeu bossfight</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/lobby.css">
 </head>
 <body>
     <div class="page" id="connection" style="display: flex">
@@ -15,8 +17,19 @@
     </div>
 
     <div class="page" id="game-lobby" style="display: none">
-        <h1>Lobby</h1>
+        <h1>Partie</h1>
         <p>game id <span id="game-lobby-game-id"></span></p>
+        <p id="game-lobby-size">0 / 5</p>
+        <div id="game-lobby-players">
+            <div class="filled">
+                <canvas></canvas>
+                <p>TabouretSoyeux</p>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
 
     <script src="js/ui.js"></script>

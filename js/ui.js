@@ -11,7 +11,20 @@ function openPage(id) {
   document.getElementById(id).style.display = 'flex';
 }
 
-function fillLobbyPage(lobby) {
-  console.log(lobby);
+let lobby = {};
+function fillLobbyPage() {
+  // game id
   document.querySelector("#game-lobby-game-id").innerText = lobby.gameId;
+
+  // players
+  document.querySelector('#game-lobby-players').innerHTML = "";
+  for (let player of lobby.players) {
+    document.querySelector('#game-lobby-players').innerHTML += `<div class="filled"><canvas></canvas><p>${player}</p></div>`;
+  }
+  for (let i = lobby.players.length; i < 5; i++) {
+    document.querySelector('#game-lobby-players').innerHTML += '<div></div>';
+  }
+
+  // lobby size
+  document.querySelector('#game-lobby-size').innerText = `${lobby.players.length} / 5`;
 }
