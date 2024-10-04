@@ -5,6 +5,7 @@
 
 #game-lobby-players {
     display: flex;
+    margin: 0 0 30px;
 }
 
 #game-lobby-players div {
@@ -35,4 +36,16 @@
     text-align: center;
     font-size: 1.2rem;
     padding: 10px 0 0;
+}
+
+#game-lobby-buttons button {
+    padding: 10px 50px;
+    font-size: 1.2rem;
+    border: 3px solid black;
+    border-radius: 15px 0 0 15px;
+    background-color: transparent;
+}
+
+#game-lobby-buttons button:nth-child(2) {
+    border-radius: 0 15px 15px 0;
 }

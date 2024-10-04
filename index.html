@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/lobby.css">
 </head>
 <body>
-    <div class="page" id="connection" style="display: flex">
+    <div class="page" id="connection" style="display: none">
         <h1>Connection au serveur</h1>
     </div>
 
@@ -16,7 +16,7 @@
         <button id="join-game-button">Join game</button>
     </div>
 
-    <div class="page" id="game-lobby" style="display: none">
+    <div class="page" id="game-lobby" style="display: flex">
         <h1>Partie</h1>
         <p>game id <span id="game-lobby-game-id"></span></p>
         <p id="game-lobby-size">0 / 5</p>
@@ -29,6 +29,10 @@
             <div></div>
             <div></div>
             <div></div>
+        </div>
+        <div id="game-lobby-buttons">
+            <button id="game-lobby-quit-button">Quitter</button>
+            <button id="game-lobby-start-button">Lancer</button>
         </div>
     </div>
 

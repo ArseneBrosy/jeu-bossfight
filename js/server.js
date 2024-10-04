@@ -36,7 +36,12 @@ socket.on('playerLeft', (player) => {
 socket.on('disconnect', () => {})
 
 //region ACTIONS
-  document.getElementById('join-game-button').addEventListener('click', () => {
-    socket.emit('joinGame');
-  });
+document.getElementById('join-game-button').addEventListener('click', () => {
+  socket.emit('joinGame');
+});
+
+document.getElementById('game-lobby-quit-button').addEventListener('click', () => {
+  socket.emit('leaveGame');
+  openPage('home');
+});
 //endregion
