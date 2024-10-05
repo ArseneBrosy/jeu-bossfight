@@ -225,7 +225,7 @@ setInterval(() => {
     }
     playersToDisplay.push(player);
     for (let playerToDisplay of playersToDisplay) {
-        CTX.drawImage(playersToDisplay.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
+        CTX.drawImage(playerToDisplay.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
             playerToDisplay.transform.width, playerToDisplay.transform.height);
     }
 

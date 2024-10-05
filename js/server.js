@@ -81,6 +81,7 @@ setInterval(() => {
   socket.emit('updatePosition', {
     x: player.transform.x,
     y: player.transform.y,
+    dir: player.direction
   });
 }, 0);
 //endregion
