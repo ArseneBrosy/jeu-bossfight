@@ -33,15 +33,20 @@ socket.on('playerLeft', (playerId) => {
   fillLobbyPage();
 });
 
-socket.on('disconnect', () => {})
+// lost connection with the server
+socket.on('disconnect', () => {
+  openPage('connection');
+})
 
 //region ACTIONS
+// join game
 document.getElementById('join-game-button').addEventListener('click', () => {
   if (document.querySelector('#home-pseudo').value !== '') {
     socket.emit('joinGame', {name: document.querySelector('#home-pseudo').value});
   }
 });
 
+// quit game
 document.getElementById('game-lobby-quit-button').addEventListener('click', () => {
   socket.emit('leaveGame');
   openPage('home');

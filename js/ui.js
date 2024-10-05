@@ -4,14 +4,24 @@
  * @since 2024-10-04
  */
 
+let lobby = {};
+let openedPage = 'connection';
+
+/**
+ * Open a page by its id and closes all others
+ * @param id the page to open
+ */
 function openPage(id) {
   for (let page of document.querySelectorAll('.page')) {
     page.style.display = 'none';
   }
   document.getElementById(id).style.display = 'flex';
+  openedPage = id;
 }
 
-let lobby = {};
+/**
+ * Updates the infos on the lobby page to match the lobby variable
+ */
 function fillLobbyPage() {
   // game id
   document.querySelector("#game-lobby-game-id").innerText = lobby.gameId;
