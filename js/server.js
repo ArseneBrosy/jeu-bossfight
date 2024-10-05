@@ -13,6 +13,7 @@ socket.on('connect', () => {
   openPage('home');
 });
 
+//region LOBBY
 socket.on('gameJoined', (lobby_) => {
   openPage('game-lobby');
   lobby = lobby_;
@@ -33,6 +34,12 @@ socket.on('playerLeft', (playerId) => {
   fillLobbyPage();
 });
 
+socket.on('gameStarted', () => {
+  lobby.state = 1;
+  openPage('game');
+})
+//endregion
+
 // lost connection with the server
 socket.on('disconnect', () => {
   openPage('connection');
@@ -50,5 +57,10 @@ document.getElementById('join-game-button').addEventListener('click', () => {
 document.getElementById('game-lobby-quit-button').addEventListener('click', () => {
   socket.emit('leaveGame');
   openPage('home');
+});
+
+// start game
+document.getElementById('game-lobby-start-button').addEventListener('click', () => {
+  socket.emit('startGame');
 });
 //endregion

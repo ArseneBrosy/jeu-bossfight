@@ -7,7 +7,7 @@
 //#region Constants
 
 // Get the canvas and its 2d context
-const CANVAS = document.querySelector("canvas");
+const CANVAS = document.querySelector("#game canvas");
 const CTX = CANVAS.getContext("2d");
 
 // Set the size of the canvas
@@ -100,7 +100,7 @@ let inputJump = false;
 let platforms = [new Transform(600,700,300,80), new Transform(1200,500,300,80)];
 
 //#endregion
-/*
+
 // Main loop
 setInterval(() => {
     // Skip if not in game
@@ -149,7 +149,6 @@ setInterval(() => {
             rightDistance = distance;
         }
     }
-    console.log(ceilDistance);
 
     if (groundDistance === 0) {
         player.isGrounded = true;
@@ -214,8 +213,6 @@ setInterval(() => {
 
     //#region Display
 
-    //console.log("Delta-time : " + deltaTime);
-
     // Clear the canvas
     CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
 
@@ -238,7 +235,7 @@ setInterval(() => {
 
     //#endregion
 
-});*/
+});
 
 //#region Inputs
 
