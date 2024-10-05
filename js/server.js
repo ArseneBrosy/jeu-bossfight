@@ -37,7 +37,7 @@ socket.on('disconnect', () => {})
 
 //region ACTIONS
 document.getElementById('join-game-button').addEventListener('click', () => {
-  if (document.querySelector('#home-pseudo').value !== null) {
+  if (document.querySelector('#home-pseudo').value !== '') {
     socket.emit('joinGame', {name: document.querySelector('#home-pseudo').value});
   }
 });
