@@ -14,11 +14,32 @@ const CTX = CANVAS.getContext("2d");
 CANVAS.width = 1920;
 CANVAS.height = 880;
 
+// Animations
+const ANIMATIONS = {
+    idle: {
+        size: 1,
+        loop: true,
+    },
+    jump: {
+        size: 5,
+        loop: false,
+    }
+}
+const ANIMATION_STEP_WAIT = 3;
+
 // Sprites
-const PLAYER_LEFT = new Image();
-PLAYER_LEFT.src = "img/player-left.png";
-const PLAYER_RIGHT = new Image();
-PLAYER_RIGHT.src = "img/player-right.png";
+const PLAYER_SPRITES = {};
+for (let name of Object.keys(ANIMATIONS)) {
+    for (let j = 0; j < ANIMATIONS[name].size; j++) {
+        for (let dir of ['left', 'right']) {
+            const animName = name + j + '-' + dir;
+            PLAYER_SPRITES[animName] = new Image();
+            PLAYER_SPRITES[animName].src = `./img/player/${animName}.png`;
+        }
+    }
+}
+const PLAYER_SPRITE_WIDTH = 136;
+const PLAYER_SPRITE_HEIGHT = 144;
 
 // Delta-time
 const DEFAULT_FPS = 60;
@@ -62,6 +83,7 @@ class Player {
     transform;
     type;
     direction = false;
+    animation = 'idle0-left';
     isGrounded = false;
     yVelocity = 0;
     jumpRemaining = DEFAULT_MAX_JUMPS;
@@ -90,9 +112,7 @@ let lastTick = 0;
 let playerId;
 
 // Players
-let player = new Player(new Transform(0, 0,
-    PLAYER_LEFT.width / 3, PLAYER_LEFT.height / 3));
-let otherPlayers = [];
+let player = new Player(new Transform(0, 0, 104, 144));
 
 // Inputs
 let inputLeft = false;
@@ -100,9 +120,23 @@ let inputRight = false;
 let inputJump = false;
 
 // Platforms
-let platforms = [new Transform(600,700,300,80), new Transform(1200,500,300,80)];
+let platforms = [];
+
+// Animation
+let animationName = 'idle';
+let animationStep = 0;
+let animationEnded = false;
+let animationNextStep = 0;
 
 //#endregion
+
+//region Functions
+function setAnimation(name) {
+    animationName = name;
+    animationStep = 0;
+    animationEnded = false;
+}
+//endregion
 
 // Main loop
 setInterval(() => {
@@ -163,6 +197,7 @@ setInterval(() => {
             player.transform.y += groundDistance;
             player.yVelocity = 0;
             player.isGrounded = true;
+            setAnimation('idle');
         } else if (player.yVelocity < 0 && ceilDistance < -player.yVelocity * deltaTime) {
             player.transform.y -= ceilDistance;
             player.yVelocity = 0;
@@ -178,6 +213,8 @@ setInterval(() => {
     if (inputJump && player.jumpRemaining > 0) {
         inputJump = false;
         player.jumpRemaining--;
+
+        setAnimation('jump');
 
         player.yVelocity = -PLAYER_JUMP_FORCE;
 
@@ -214,8 +251,30 @@ setInterval(() => {
 
     //#endregion
 
+    //region Animations
+    if (!animationEnded) {
+        animationNextStep += deltaTime;
+        if (animationNextStep >= ANIMATION_STEP_WAIT) {
+            animationStep++;
+            animationNextStep = 0;
+            if (animationStep >= ANIMATIONS[animationName].size) {
+                animationStep = 0;
+                if (!ANIMATIONS[animationName].loop) {
+                    animationEnded = true;
+                    animationStep = ANIMATIONS[animationName].size - 1;
+                }
+            }
+        }
+    }
+    //endregion
+
+    //region Display
+
     // Clear the canvas
     CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
+
+    // create my anim
+    player.animation = `${animationName}${animationStep}-${player.direction ? 'right' : 'left'}`;
 
     // Draw the players
     let playersToDisplay = JSON.parse(JSON.stringify(lobby.players.map(e => e.playerObject)));
@@ -225,8 +284,9 @@ setInterval(() => {
     }
     playersToDisplay.push(player);
     for (let playerToDisplay of playersToDisplay) {
-        CTX.drawImage(playerToDisplay.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
-            playerToDisplay.transform.width, playerToDisplay.transform.height);
+        CTX.drawImage(PLAYER_SPRITES[playerToDisplay.animation],
+          playerToDisplay.transform.x - (PLAYER_SPRITE_WIDTH - playerToDisplay.transform.width) / 2,
+          playerToDisplay.transform.y, PLAYER_SPRITE_WIDTH, PLAYER_SPRITE_HEIGHT);
     }
 
     // Draw the platforms

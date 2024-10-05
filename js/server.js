@@ -38,7 +38,12 @@ socket.on('gameStarted', () => {
   lobby.state = 1;
   openPage('game');
   socket.emit('instantiatePlayer', player);
-})
+  socket.emit('getLevel');
+});
+
+socket.on('gotLevel', (level) => {
+  platforms = level;
+});
 //endregion
 
 //region GAME
@@ -81,7 +86,7 @@ setInterval(() => {
   socket.emit('updatePosition', {
     x: player.transform.x,
     y: player.transform.y,
-    dir: player.direction
+    anim: player.animation
   });
 }, 0);
 //endregion
