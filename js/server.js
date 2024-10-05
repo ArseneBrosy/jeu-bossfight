@@ -9,7 +9,7 @@ import { io } from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js';
 const socket = io('ws://172.233.246.192:3000');
 
 socket.on('connect', () => {
-  console.log(socket.id);
+  playerId = socket.id;
   openPage('home');
 });
 
@@ -37,7 +37,14 @@ socket.on('playerLeft', (playerId) => {
 socket.on('gameStarted', () => {
   lobby.state = 1;
   openPage('game');
+  socket.emit('instantiatePlayer', player);
 })
+//endregion
+
+//region GAME
+socket.on('updatePlayers', (players) => {
+  lobby.players = players;
+});
 //endregion
 
 // lost connection with the server
@@ -63,4 +70,17 @@ document.getElementById('game-lobby-quit-button').addEventListener('click', () =
 document.getElementById('game-lobby-start-button').addEventListener('click', () => {
   socket.emit('startGame');
 });
+//endregion
+
+//region Player
+setInterval(() => {
+  if (openedPage !== 'game') {
+    return;
+  }
+
+  socket.emit('updatePosition', {
+    x: player.transform.x,
+    y: player.transform.y,
+  });
+}, 0);
 //endregion

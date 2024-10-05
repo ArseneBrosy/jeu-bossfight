@@ -86,6 +86,9 @@ class Player {
 let deltaTime = 0;
 let lastTick = 0;
 
+// server
+let playerId;
+
 // Players
 let player = new Player(new Transform(0, 0,
     PLAYER_LEFT.width / 3, PLAYER_LEFT.height / 3));
@@ -211,16 +214,18 @@ setInterval(() => {
 
     //#endregion
 
-    //#region Display
-
     // Clear the canvas
     CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
 
     // Draw the players
-    let playersToDisplay = JSON.parse(JSON.stringify(otherPlayers));
+    let playersToDisplay = JSON.parse(JSON.stringify(lobby.players.map(e => e.playerObject)));
+    let myIndex = lobby.players.map(e => e.id).indexOf(playerId);
+    if (myIndex !== -1) {
+        playersToDisplay.splice(myIndex, 1);
+    }
     playersToDisplay.push(player);
     for (let playerToDisplay of playersToDisplay) {
-        CTX.drawImage(player.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
+        CTX.drawImage(playersToDisplay.direction ? PLAYER_RIGHT : PLAYER_LEFT, playerToDisplay.transform.x, playerToDisplay.transform.y,
             playerToDisplay.transform.width, playerToDisplay.transform.height);
     }
 
