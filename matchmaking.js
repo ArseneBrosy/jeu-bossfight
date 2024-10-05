@@ -18,8 +18,7 @@ function createPlayer(id, name) {
   return {
     id: id,
     name: name,
-    x: 0,
-    y: 0,
+    playerObject: null
   }
 }
 
@@ -33,7 +32,7 @@ function joinGame(socket, player) {
   let newPlayer = createPlayer(socket.id, player.name);
 
   for (let game of games) {
-    if (game.players.length < MAX_PLAYERS_PER_GAME) {
+    if (game.players.length < MAX_PLAYERS_PER_GAME && game.state === 0) {
       game.players.push(newPlayer);
       socket.join(game.id);
       socket.emit('gameJoined', { gameId: game.id, players: game.players });
@@ -62,10 +61,13 @@ function joinGame(socket, player) {
   }
 }
 
+/**
+ * Start the game of the player who asked
+ * @param socket connection with the player
+ */
 function startGame(socket) {
   games.forEach((game) => {
-    const playerIndex = game.players.map(e => e.id).indexOf(socket.id);
-    if (playerIndex !== -1) {
+    if (game.players.map(e => e.id).includes(socket.id)) {
       game.state = 1;
 
       // broadcast
@@ -75,6 +77,13 @@ function startGame(socket) {
       socket.emit('gameStarted');
     }
   });
+}
+
+/**
+ * Get all the ongoing games
+ */
+function getGames() {
+  return games;
 }
 
 /**
@@ -106,4 +115,5 @@ module.exports = {
   joinGame,
   leaveGame,
   startGame,
+  getGames
 };

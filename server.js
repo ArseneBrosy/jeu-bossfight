@@ -12,6 +12,7 @@ const io = new Server(3000, {
   }
 });
 const matchmaking = require('./matchmaking');
+const gamemanager = require('./gamemanager');
 
 io.on('connection', (socket) => {
   console.log(`Client connected : ${socket.id}`);
@@ -26,9 +27,30 @@ io.on('connection', (socket) => {
 
   socket.on('startGame', () => {
     matchmaking.startGame(socket);
-  })
+  });
+
+  socket.on('instantiatePlayer', (player) => {
+    gamemanager.instantiatePlayer(socket, player);
+  });
+
+  socket.on('updatePosition', (position) => {
+    gamemanager.updatePlayerPosition(socket, position.x, position.y, position.dir);
+  });
 
   socket.on('disconnect', () => {
     matchmaking.leaveGame(socket);
   });
 });
+
+//region Update lobby players
+setInterval(() => {
+  matchmaking.getGames().forEach((game) => {
+    if (game.state !== 1) {
+      return;
+    }
+    for (let player of game.players) {
+      io.to(player.id).emit('updatePlayers', game.players);
+    }
+  });
+}, 0);
+//endregion
