@@ -16,15 +16,19 @@ const matchmaking = require('./matchmaking');
 io.on('connection', (socket) => {
   console.log(`Client connected : ${socket.id}`);
 
-  socket.on('message', (msg) => {
-    console.log(`Message reçu de ${socket.id} : ${msg}`);
+  socket.on('joinGame', (player) => {
+    matchmaking.joinGame(socket, player);
   });
 
-  socket.on('joinGame', () => {
-    matchmaking.joinGame(socket);
+  socket.on('leaveGame', () => {
+    matchmaking.leaveGame(socket);
   });
+
+  socket.on('startGame', () => {
+    matchmaking.startGame(socket);
+  })
 
   socket.on('disconnect', () => {
-    matchmaking.handleDisconnect(socket);
+    matchmaking.leaveGame(socket);
   });
 });
