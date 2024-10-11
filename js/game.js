@@ -276,13 +276,19 @@ setInterval(() => {
     // create my anim
     player.animation = `${animationName}${animationStep}-${player.direction ? 'right' : 'left'}`;
 
-    // Draw the players
+    // get the players from the server
     let playersToDisplay = JSON.parse(JSON.stringify(lobby.players.map(e => e.playerObject)));
+
+    // remove online myself from the players
     let myIndex = lobby.players.map(e => e.id).indexOf(playerId);
     if (myIndex !== -1) {
         playersToDisplay.splice(myIndex, 1);
     }
+
+    o// add local myself to the players
     playersToDisplay.push(player);
+
+    // Draw the players
     for (let playerToDisplay of playersToDisplay) {
         CTX.drawImage(PLAYER_SPRITES[playerToDisplay.animation],
           playerToDisplay.transform.x - (PLAYER_SPRITE_WIDTH - playerToDisplay.transform.width) / 2,
